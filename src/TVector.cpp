@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v2.4 copyright Comine.com 20210214U1151
+//v2.5 copyright Comine.com 20220718M1635
 #include "MStdLib.h"
 #include "MIReader.h"
 #include "MIWriter.h"

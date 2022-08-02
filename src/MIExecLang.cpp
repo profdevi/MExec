@@ -30,71 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v0.9 copyright Comine.com 20220802T1133
+//v1.0 copyright Comine.com 20220418M1723
 #include "MStdLib.h"
-#include "MCommandArg.h"
-#include "MExecScript.h"
+#include "MIExecLang.h"
 
 
 //******************************************************
-//* Module Elements
+//**  MIExecLang Place Holder
 //******************************************************
-static const char *GApplicationName="MExec";	// Used in Help
-static const char *GApplicationVersion="0.9";	// Used in Help
-
-////////////////////////////////////////////////////
-static void GDisplayHelp(void);
-
-////////////////////////////////////////////////////
-int main(int argn,const char *argv[])
-	{
-	MCommandArg args(argn,argv);
-
-	///////////////////////////////////////////////
-	if(args.GetArgCount()<2)
-		{
-		GDisplayHelp();
-		return 0;
-		}
-
-	if(args.CheckRemoveHelp()==true)
-		{
-		GDisplayHelp();
-		return 0;
-		}
-
-	MExecScript execscript;
-	if(execscript.Create()==false)
-		{
-		MStdPrintf("**System Failed\n");
-		return 1;
-		}
-
-	const int argcount=args.GetArgCount();
-	for(int i=1;i<argcount;++i)
-		{
-		if(execscript.Exec(args.GetArg(i))==true) { break; }
-		}
-
-	return 0;
-	}
-
-
-////////////////////////////////////////////////////
-static void GDisplayHelp(void)
-	{
-	MStdPrintf(	"\n"
-				"   usage:  %s <scr file>\n"
-				"           v%s copyright Comine.com\n"
-				"\n"
-				"   Run a source file of languages\n"
-				"\n"
-				,GApplicationName,GApplicationVersion);
-
-	MStdPrintf(	"   Available Languages:\n\n");
-	MExecScript exec(true);
-	exec.PrintStatus();
-	MStdPrintf("\n");
-	}
-
 

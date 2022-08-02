@@ -3,7 +3,7 @@ MExec takes a source file as an argument and then executes an interpreter or com
 
 <hr />
 
- usage:  MExec [-?|-s]  
+ usage:  MExec [src file]
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copyright Comine.com  
   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run a source file of languages      

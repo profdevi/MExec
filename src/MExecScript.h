@@ -30,29 +30,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v0.8 copyright Comine.com 20220325F0735
+//v0.9 copyright Comine.com 20220802T1113
 #ifndef MExecScript_h
 #define MExecScript_h
 
 /////////////////////////////////////////////////
 #include "MStdLib.h"
-
-/*
-	Executes a single script file based on the file exetension.
-
-		.hx		Haxe
-		.dart	Dart
-		.lua	Lua 
-		.py		Python
-		.c		tiny C Compiler
-		.java	java
-		.cpp	c++ MS Compiler CL
-		.js		node Javascript
-		.hs		Haskell Compiler
-		.nim	nim compiler
-		.jl     julia compiler
-        .rs     rust compiler
-*/
+#include "MIExecLang.h"
 
 //******************************************************
 //**  MExecScript class
@@ -70,7 +54,6 @@ class MExecScript
 	~MExecScript(void);
 	bool Create(void);
 	bool Destroy(void);
-	bool PrintLanguages(const char *prefix="");
 	bool PrintStatus(void);
 	bool Exec(const char *filename);
 	};

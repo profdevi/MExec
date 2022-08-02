@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v1.10 copyright Comine.com 20160718M0708
+//v1.11 copyright Comine.com 20220424U1147
 #ifndef MPathParser_h
 #define MPathParser_h
 

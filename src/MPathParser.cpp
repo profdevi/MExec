@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v1.10 copyright Comine.com 20160718M0708
+//v1.11 copyright Comine.com 20220424U1147
 #include <windows.h>
 #include "MStdLib.h"
 #include "MBuffer.h"
@@ -310,12 +310,13 @@ bool MPathParser::SetFullFileName(const char *filename)	// Set Filename as "One.
 	int length=MStdStrLen(filename);
 	int dotposition=GGetDotPosition(filename);
 
+	/*
 	if(length-dotposition-1>3)
 		{
 		//=File Extension is not three chars
 		return SetFileName(filename); // Set to normal filename
 		}
-
+	*/
 	// Check if file length is good
 	if(length>=_MAX_PATH)
 		{

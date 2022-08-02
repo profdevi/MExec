@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v2.4 copyright Comine.com 20210214U1151
+//v2.5 copyright Comine.com 20220718M1635
 #ifndef TVector_h
 #define TVector_h
 
@@ -47,327 +47,418 @@ class TVector
 	int mCount;
 
 	/////////////////////////////////////////
-	void ClearObject(void)
-		{
-		mArray=0;
-		mCount=0;
-		}	
+	void ClearObject(void);
 
 	public:
 	/////////////////////////////////////////
-	TVector(void)
-		{  ClearObject();  }
+	TVector(void);
+	explicit TVector(int count);
+	explicit TVector(const TVector<Data> &other);
+	explicit TVector(MIReader &reader);
+	TVector(const Data *data,int len);
+	TVector(TVector &&ref);
+	~TVector(void);
+	bool Create(int count);
+	bool Create(const TVector<Data> &other);
+	bool Create(MIReader &reader);
+	bool Create(const Data *arr,int count);
+	bool Destroy(void);
+	Data *Get(void) const;
+	int GetCount(void) const;
+	Data &operator[](int index) const;
+	Data & Get(int index) const;
+	Data *GetItemPtr(int index) const;
+	bool Set(int index,const Data &ref);
+	bool Set(const Data &ref);
+	bool Swap(TVector<Data> &ref);
+	bool Swap(int index1,int index2);
+	bool Write(MIWriter &writer) const;
+	bool Copy(Data *target,int len);
+	bool Reverse(void);
+	bool Resize(int newsize);
+	bool operator=(const TVector<Data>  &copy);
+	};
 
-	/////////////////////////////////////////
-	explicit TVector(int count)
+
+////////////////////////////////////////////////
+// Template Function Definitions
+////////////////////////////////////////////////
+template <typename Data>
+void TVector<Data>::ClearObject(void)
+	{
+	mArray=0;
+	mCount=0;
+	}	
+
+
+//////////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(void)
+	{
+	ClearObject();
+	}
+
+
+/////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(int count)
+	{
+	ClearObject();
+	if(Create(count)==false)
 		{
-		ClearObject();
-		if(Create(count)==false)
-			{
-			return;
-			}
+		return;
 		}
+	}
 
-	/////////////////////////////////////////
-	explicit TVector(TVector<Data> &other)
+
+/////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(const TVector<Data> &other)
+	{
+	ClearObject();
+	if(Create(other)==false)
 		{
-		ClearObject();
-		if(Create(other)==false)
-			{
-			return;
-			}
+		return;
 		}
+	}
 
-	/////////////////////////////////////////
-	explicit TVector(MIReader &reader)
+
+/////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(MIReader &reader)
+	{
+	ClearObject();
+	if(Create(reader)==false)
 		{
-		ClearObject();
-		if(Create(reader)==false)
-			{
-			return;
-			}
+		return;
 		}
+	}
 
-	/////////////////////////////////////////
-	TVector(const Data *data,int len)
+/////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(const Data *data,int len)
+	{
+	ClearObject();
+	if(Create(data,len)==false)
 		{
-		ClearObject();
-		if(Create(data,len)==false)
-			{
-			}
 		}
+	}
 
-	/////////////////////////////////////////
-	~TVector(void)
-		{  Destroy();  }
 
-	///////////////////////////////////////
-	bool Create(int count)
+////////////////////////////////////////
+template <typename Data>
+TVector<Data>::TVector(TVector &&refobj)
+	{
+	ClearObject();
+	mArray=refobj.mArray;
+	mCount=refobj.mCount;
+	refobj.mArray=nullptr;
+	refobj.mCount=0;
+	}
+
+
+/////////////////////////////////////////
+template <typename Data>
+TVector<Data>::~TVector(void)
+	{  Destroy();  }
+
+
+///////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Create(int count)
+	{
+	Destroy();
+	MStdAssert(count>0);
+	mCount=count;
+	mArray = new(std::nothrow) Data[mCount];
+	if(mArray==NULL)
 		{
 		Destroy();
-		MStdAssert(count>0);
-		mCount=count;
-		mArray = new(std::nothrow) Data[mCount];
-		if(mArray==NULL)
-			{
-			Destroy();
-			return false;
-			}
-
-		return true;
+		return false;
 		}
 
-	///////////////////////////////////////
-	bool Create(const TVector<Data> &other)
+	return true;
+	}
+
+
+///////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Create(const TVector<Data> &other)
+	{
+	Destroy();
+	if(Create(other.GetCount())==false)
 		{
-		Destroy();
-		if(Create(other.GetCount())==false)
-			{
-			return false;
-			}
-
-		// Now Copy the data elements
-		const Data *src=other.Get();
-		Data *target=mArray;
-		int count=other.GetCount();
-
-		int i;
-		for(i=0;i<count;++i)
-			{
-			*target++ = *src++;
-			}
-
-		return true;
+		return false;
 		}
+
+	// Now Copy the data elements
+	const Data *src=other.Get();
+	Data *target=mArray;
+	int count=other.GetCount();
+
+	int i;
+	for(i=0;i<count;++i)
+		{
+		// assignment constructor
+		*target++ = *src++;
+		}
+
+	return true;
+	}
 
 	
-	///////////////////////////////////////
-	bool Create(MIReader &reader)
+///////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Create(MIReader &reader)
+	{
+	int count;
+	if(reader.Read(count)==false)
 		{
-		int count;
-		if(reader.Read(count)==false)
+		Destroy();
+		return false;
+		}
+
+	if(Create(count)==false)
+		{  return false;  }
+
+	// Now read the array
+	int i;
+	for(i=0;i<mCount;++i)
+		{
+		if(MIReaderRead(reader,mArray[i])==false)
 			{
 			Destroy();
 			return false;
 			}
-
-		if(Create(count)==false)
-			{  return false;  }
-
-		// Now read the array
-		int i;
-		for(i=0;i<mCount;++i)
-			{
-			if(MIReaderRead(reader,mArray[i])==false)
-				{
-				Destroy();
-				return false;
-				}
-			}
+		}
 		
-		return true;
+	return true;
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Create(const Data *arr,int count)
+	{
+	if(Create(count)==false)
+		{
+		return false;
 		}
 
-	////////////////////////////////////////
-	bool Create(const Data *arr,int count)
+	int i;
+	for(i=0;i<count;++i)
 		{
-		if(Create(count)==false)
-			{
-			return false;
-			}
-
-		int i;
-		for(i=0;i<count;++i)
-			{
-			mArray[i] = arr[i];
-			}
-
-		return true;
+		// assignment copy
+		mArray[i] = arr[i];
 		}
 
+	return true;
+	}
 
-	////////////////////////////////////////
-	bool Destroy(void)
+
+////////////////////////////////////////
+template<typename Data>
+bool TVector<Data>::Destroy(void)
+	{
+	if(mArray!=0)
 		{
-		if(mArray!=0)
-			{
-			delete[] mArray;
-			mArray=0;
-			}
-
-		ClearObject();
-		return true;
-		}
-
-
-	////////////////////////////////////////
-	inline Data *Get(void) const
-		{
-		return mArray;
-		}
-
-	///////////////////////////////////////
-	inline int GetCount(void) const
-		{
-		return mCount;
-		}
-
-	////////////////////////////////////////
-	// Fast Inline version for speed
-	#ifdef NDEBUG
-	/////////////////////////////////////////
-	inline operator Data *(void)
-		{
-		return mArray;
-		}
-	#else
-	////////////////////////////////////////
-	inline Data &operator[](int index)
-		{
-		return mArray[index];
-		}
-	#endif // NDEBUG
-
-	////////////////////////////////////////
-	inline Data & Get(int index) const
-		{
-		return mArray[index];
-		}
-
-	////////////////////////////////////////
-	inline Data *GetItemPtr(int index) const
-		{
-		return mArray+index;
-		}
-
-	////////////////////////////////////////
-	inline bool Set(int index,const Data &ref)
-		{
-		mArray[index]=ref;
-		return true;
-		}
-
-	////////////////////////////////////////
-	bool Set(const Data &ref)
-		{
-		int i;
-		for(i=0;i<mCount;++i)
-			{
-			mArray[i]=ref;
-			}
-
-		return true;
-		}
-
-	////////////////////////////////////////
-	bool Swap(TVector<Data> &ref)
-		{
-		Data *tmp=mArray;
-		mArray=ref.mArray;
-		ref.mArray=tmp;
-
-		int tmplength=mCount;
-		mCount = ref.mCount;
-		ref.mCount = tmplength;
-		return true;
-		}
-
-
-	/////////////////////////////////////////
-	bool Swap(int index1,int index2)
-		{
-		Data tmp=mArray[index1];
-		mArray[index1]=mArray[index2];
-		mArray[index2]=tmp;
-		return true;
-		}
-
-
-	/////////////////////////////////////////
-	bool Write(MIWriter &writer) const
-		{
-		if(writer.Write(mCount)==false)
-			{
-			return false;
-			}
-
-		int i;
-		for(i=0;i<mCount;++i)
-			{
-			if(MIWriterWrite(writer,mArray[i])==false)
-				{
-				return false;
-				}
-			}
-
-		return true;
-		}
-
-	////////////////////////////////////////
-	bool Copy(Data *target,int len)
-		{
-		MStdAssert(mCount<=len && target!=NULL );
-		int i;
-		for(i=0;i<mCount;++i)
-			{
-			target[i] = mArray[i];
-			}
-
-		return true;
-		}
-
-	///////////////////////////////////////
-	// Reverse the array contents
-	bool Reverse(void)
-		{
-		int begin,end;
-		begin=0;
-		end=mCount-1;
-		while(begin<end)
-			{
-			if(Swap(begin,end)==false)
-				{
-				return false;
-				}
-
-			begin = begin + 1;
-			end = end - 1;
-			}
-
-		return true;
-		}
-
-
-	///////////////////////////////////////
-	bool Resize(int newsize)
-		{
-		MStdAssert(newsize>0);
-		Data *newarray;
-		newarray = new(std::nothrow) Data[newsize];
-		if(newarray==NULL)
-			{
-			return false;
-			}
-		
-		// Copy Old Data to new Memory
-		const int mincopylength=MStdGetMin(newsize,mCount);
-		int i;
-		for(i=0;i<mincopylength;++i)
-			{
-			// Copy Constructor
-			newarray[i] = mArray[i];
-			}
-
-		// Release old objects and memory
 		delete[] mArray;
-
-		// Point to new array
-		mArray=newarray;
-		mCount=newsize;
-
-		return true;
+		mArray=0;
 		}
-	};
+
+	ClearObject();
+	return true;
+	}
+
+
+////////////////////////////////////////
+template<typename Data>
+Data *TVector<Data>::Get(void) const
+	{
+	return mArray;
+	}
+
+
+///////////////////////////////////////
+template<typename Data>
+int TVector<Data>::GetCount(void) const
+	{
+	return mCount;
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+Data &TVector<Data>::operator[](int index) const
+	{
+	return mArray[index];
+	}
+
+////////////////////////////////////////
+template <typename Data>
+Data & TVector<Data>::Get(int index) const
+	{
+	return mArray[index];
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+Data *TVector<Data>::GetItemPtr(int index) const
+	{
+	return mArray+index;
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Set(int index,const Data &ref)
+	{
+	Data tmpobj(ref);
+	mArray[index]=tmpobj;
+	return true;
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Set(const Data &ref)
+	{
+	int i;
+	for(i=0;i<mCount;++i)
+		{
+		Data tmpobj(ref);
+		mArray[i]=tmpobj;
+		}
+
+	return true;
+	}
+
+
+////////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Swap(TVector<Data> &ref)
+	{
+	Data *tmp=mArray;
+	mArray=ref.mArray;
+	ref.mArray=tmp;
+
+	int tmplength=mCount;
+	mCount = ref.mCount;
+	ref.mCount = tmplength;
+	return true;
+	}
+
+
+/////////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Swap(int index1,int index2)
+	{
+	Data tmp=mArray[index1];
+	mArray[index1]=mArray[index2];
+	mArray[index2]=tmp;
+	return true;
+	}
+
+
+/////////////////////////////////////////
+template<typename Data>
+bool TVector<Data>::Write(MIWriter &writer) const
+	{
+	if(writer.Write(mCount)==false)
+		{
+		return false;
+		}
+
+	int i;
+	for(i=0;i<mCount;++i)
+		{
+		if(MIWriterWrite(writer,mArray[i])==false)
+			{
+			return false;
+			}
+		}
+
+	return true;
+	}
+
+////////////////////////////////////////
+template<typename Data>
+bool TVector<Data>::Copy(Data *target,int len)
+	{
+	MStdAssert(mCount<=len && target!=NULL );
+	int i;
+	for(i=0;i<mCount;++i)
+		{
+		target[i] = mArray[i];
+		}
+
+	return true;
+	}
+
+
+///////////////////////////////////////
+// Reverse the array contents
+template<typename Data>
+bool TVector<Data>::Reverse(void)
+	{
+	int begin,end;
+	begin=0;
+	end=mCount-1;
+	while(begin<end)
+		{
+		if(Swap(begin,end)==false)
+			{
+			return false;
+			}
+
+		begin = begin + 1;
+		end = end - 1;
+		}
+
+	return true;
+	}
+
+
+///////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::Resize(int newsize)
+	{
+	MStdAssert(newsize>0);
+	Data *newarray;
+	newarray = new(std::nothrow) Data[newsize];
+	if(newarray==NULL)
+		{
+		return false;
+		}
+		
+	// Copy Old Data to new Memory
+	const int mincopylength=MStdGetMin(newsize,mCount);
+	int i;
+	for(i=0;i<mincopylength;++i)
+		{
+		// Copy Constructor
+		newarray[i] = mArray[i];
+		}
+
+	// Release old objects and memory
+	delete[] mArray;
+
+	// Point to new array
+	mArray=newarray;
+	mCount=newsize;
+
+	return true;
+	}
+
+
+///////////////////////////////////////
+template <typename Data>
+bool TVector<Data>::operator=(const TVector<Data>  &copy)
+	{
+	if(Create(copy)==true) { return true; }
+	return false;
+	}
 
 #endif //TVector_h
 
