@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-//v0.9 copyright Comine.com 20220802T1133
+//v0.9 copyright Comine.com 20220803W1000
 #include "MStdLib.h"
 #include "MCommandArg.h"
 #include "MExecScript.h"
@@ -70,11 +70,28 @@ int main(int argn,const char *argv[])
 		return 1;
 		}
 
+	bool flagexecuted=false;
 	const int argcount=args.GetArgCount();
 	for(int i=1;i<argcount;++i)
 		{
-		if(execscript.Exec(args.GetArg(i))==true) { break; }
+		if(execscript.Exec(args.GetArg(i))==true)
+			{
+			flagexecuted=true;
+			}
 		}
+
+	if(flagexecuted==false)
+		{
+		MStdPrintf(	"\n"
+					"=============================================================\n"
+					"  **No Compiler/Interpreter Found to match file extension**");
+		}
+
+	MStdPrintf(	"\n"
+				"================= Press Enter To Continue ===================\n");
+	// Wait Till User presses Enter
+	char buffer[100];
+	MStdGetString(buffer,sizeof(buffer)-2);
 
 	return 0;
 	}

@@ -3,13 +3,11 @@ MExec takes a source file as an argument and then executes an interpreter or com
 
 <hr />
 
- usage:  MExec [src file]
+ usage:  MExec [src file]+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copyright Comine.com  
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run a source file of languages      
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run one or more source files
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-s   :  Run status of languages    
-  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Available Languages:  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Haxe  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dart  
@@ -18,9 +16,6 @@ MExec takes a source file as an argument and then executes an interpreter or com
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C           :  Tiny C Compiler tcc  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++         : Microsoft cl Compiler  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TypeScript  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Haskell  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nim  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Julia  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rust  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++         : LLVM clang++ Compiler  
